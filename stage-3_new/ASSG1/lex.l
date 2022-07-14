@@ -3,7 +3,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include "y.tab.h"
-	#include "exptree.h"
+	#include "helper.h"
 	int number;
 	char *symbol;
 %}
@@ -11,7 +11,7 @@
 %%
 [0-9]+	{
 	number=atoi(yytext);
-	yylval.no=createTreeNode(number,int_type,NULL,0,NULL,NULL,NULL);
+	yylval.no=createLeafNode(number,int_type,NULL,0);
 	return NUM;
 	}
 "+"	{return PLUS;}
@@ -37,8 +37,8 @@
 [a-z]	{
 	symbol=(char *)malloc(sizeof(char));
 	*symbol=*yytext;
-	yylval.no=createTreeNode(0,int_type,symbol,1,NULL,NULL,NULL);
-	return VAR;
+	yylval.no=createLeafNode(0,int_type,symbol,1);
+	return ID;
 	}
 ";"	{return *yytext;}
 [ \t]	{}

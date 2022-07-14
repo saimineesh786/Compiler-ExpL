@@ -2,21 +2,21 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	#include "exptree.h"
-	#include "exptree.c"
+	#include "helper.h"
+	#include "helper.c"
 	int yylex(void);
 %}
 
 %union{
 	struct tnode *no;
 }
-%type <no> expr NUM ID READ WRITE Stmts Stmt ReadStmt WriteStmt AssgStmt IfStmt WhileStmt
+%type <no> Program expr Stmts Stmt ReadStmt WriteStmt AssgStmt IfStmt WhileStmt
 %token NUM PLUS MINUS MUL DIV LT GT LTE GTE NTEQ EQ READ WRITE ASSIGN ID IF WHILE DO ELSE ENDIF ENDWHILE
 %nonassoc LT GT LTE GTE NTEQ EQ
 %left PLUS MINUS
 %left MUL DIV
 %%
-Program	: Stmts {codeGen($$);exit(0);}
+Program	: Stmts {codeGeneration($$);exit(0);}
 		;
 Stmts		: Stmts Stmt {$$=createConnectorNode(18,$1,$2);}
 		| Stmt {$$=$1;}
@@ -27,11 +27,11 @@ Stmt		: AssgStmt {$$=$1;}
 		| ReadStmt {$$=$1;}
 		| WriteStmt {$$=$1;}
 		;
-ReadStmt	: READ '(' ID ')' ';' {$$ = createIONode(13,$3);}
+ReadStmt	: READ '(' ID ')' ';' {$$ = createIONode(13,$<no>3);}
 		;
 WriteStmt	: WRITE '(' expr ')' ';' {$$ = createIONode(14,$3);}
 		;
-AssgStmt	: ID ASSIGN expr ';' {$$ = createAssignmentNode(12,$1,$3);}
+AssgStmt	: ID ASSIGN expr ';' {$$ = createAssignmentNode(12,$<no>1,$3);}
 		;		 
 IfStmt		: IF '(' expr ')' '{' Stmts '}' ELSE '{' Stmts '}' ENDIF ';' {$$ = createIfElseNode(16,$3,$6,$10);}
 		| IF '(' expr ')' '{' Stmts '}' ENDIF ';' {$$ = createIfNode(15,$3,$6);}
@@ -49,8 +49,8 @@ expr		: expr PLUS expr {$$ = createArithmeticNode(2,$1,$3);}
 		| expr GTE expr {$$ = createLogicalNode(9,$1,$3);}
 		| expr EQ expr {$$ = createLogicalNode(10,$1,$3);}
 		| expr NTEQ expr {$$ = createLogicalNode(11,$1,$3);}
-		| NUM {$$ = $1;}
-		| ID {$$ = $1;}
+		| NUM {$$ = $<no>1;}
+		| ID {$$ = $<no>1;}
 		; 
 %%
 

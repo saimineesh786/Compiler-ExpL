@@ -1,8 +1,8 @@
 #define int_type 0
 #define bool_type 1
-#include <string.h>
-int *variables;
-FILE * yyin;
+#include <stdio.h>
+FILE *yyin;
+
 typedef struct tnode{
 	int val; //  value for constants
 	int type; // type of variable
@@ -44,12 +44,12 @@ tnode * createIfNode(int nodeType,tnode *expr,tnode *stmts);
 
 tnode * createIfElseNode(int nodeType,tnode *expr,tnode *ifStmts,tnode *elseStmts);
 
-tnode * createAssignmentNode(int nodeType,tnode *id.tnode *expr);
+tnode * createAssignmentNode(int nodeType,tnode *id,tnode *expr);
 
 tnode * createIONode(int nodeType,tnode *Location);
 
 tnode * createConnectorNode(int nodeType,tnode *stmts,tnode *stmt);
 
-int codegen(tnode *);
+int codeGeneration(tnode *);
 
 int yyerror(char const *);
