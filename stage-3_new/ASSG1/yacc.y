@@ -2,21 +2,23 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	#include "helper.h"
-	#include "helper.c"
+	#include "declarations.h"
+	#include "creationLogic.c"
+	#include "codeGenerator.c"
 	int yylex(void);
+	extern FILE * yyin;
 %}
 
 %union{
 	struct tnode *no;
 }
 %type <no> Program expr Stmts Stmt ReadStmt WriteStmt AssgStmt IfStmt WhileStmt
-%token NUM PLUS MINUS MUL DIV LT GT LTE GTE NTEQ EQ READ WRITE ASSIGN ID IF WHILE DO ELSE ENDIF ENDWHILE
+%token NUM PLUS MINUS MUL DIV LT GT LTE GTE NTEQ EQ READ WRITE ASSIGN ID IF WHILE DO ELSE ENDIF ENDWHILE THEN
 %nonassoc LT GT LTE GTE NTEQ EQ
 %left PLUS MINUS
 %left MUL DIV
 %%
-Program	: Stmts {codeGeneration($$);exit(0);}
+Program	: Stmts {codeGen($$);exit(0);}
 		;
 Stmts		: Stmts Stmt {$$=createConnectorNode(18,$1,$2);}
 		| Stmt {$$=$1;}
@@ -33,8 +35,8 @@ WriteStmt	: WRITE '(' expr ')' ';' {$$ = createIONode(14,$3);}
 		;
 AssgStmt	: ID ASSIGN expr ';' {$$ = createAssignmentNode(12,$<no>1,$3);}
 		;		 
-IfStmt		: IF '(' expr ')' '{' Stmts '}' ELSE '{' Stmts '}' ENDIF ';' {$$ = createIfElseNode(16,$3,$6,$10);}
-		| IF '(' expr ')' '{' Stmts '}' ENDIF ';' {$$ = createIfNode(15,$3,$6);}
+IfStmt		: IF '(' expr ')' THEN Stmts ELSE Stmts ENDIF ';' {$$ = createIfElseNode(16,$3,$6,$8);}
+		| IF '(' expr ')' THEN Stmts ENDIF ';' {$$ = createIfNode(15,$3,$6);}
 		;	
 WhileStmt	: WHILE '(' expr ')' DO Stmts	ENDWHILE ';' {$$ = createWhileNode(17,$3,$6);}
 		;
@@ -60,8 +62,8 @@ int yyerror(char const *s){
 }
 
 int main(void){
-	FILE *fp=fopen("test1.expl","r");
-	yyin=fp;
+	FILE *inpFile=fopen("test.expl","r");
+	yyin=inpFile;
 	yyparse();
 	return 0;
 }

@@ -3,7 +3,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include "y.tab.h"
-	#include "helper.h"
+	#include "declarations.h"
 	int number;
 	char *symbol;
 %}
@@ -28,7 +28,7 @@
 "read"  {return READ;}
 "write" {return WRITE;}
 "if"	{return IF;}
-"then"	{return ENDIF;}
+"then"	{return THEN;}
 "else"	{return ELSE;}
 "endif" {return ENDIF;}
 "while" {return WHILE;}

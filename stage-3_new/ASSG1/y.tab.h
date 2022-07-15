@@ -69,7 +69,8 @@ extern int yydebug;
     DO = 275,
     ELSE = 276,
     ENDIF = 277,
-    ENDWHILE = 278
+    ENDWHILE = 278,
+    THEN = 279
   };
 #endif
 /* Tokens.  */
@@ -94,16 +95,17 @@ extern int yydebug;
 #define ELSE 276
 #define ENDIF 277
 #define ENDWHILE 278
+#define THEN 279
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "yacc.y"
+#line 12 "yacc.y"
 
 	struct tnode *no;
 
-#line 107 "y.tab.h"
+#line 109 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

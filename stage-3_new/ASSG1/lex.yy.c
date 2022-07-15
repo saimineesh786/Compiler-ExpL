@@ -479,7 +479,7 @@ char *yytext;
 	#include <stdlib.h>
 	#include <string.h>
 	#include "y.tab.h"
-	#include "helper.h"
+	#include "declarations.h"
 	int number;
 	char *symbol;
 #line 486 "lex.yy.c"
@@ -841,7 +841,7 @@ YY_RULE_SETUP
 case 16:
 YY_RULE_SETUP
 #line 31 "lex.l"
-{return ENDIF;}
+{return THEN;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP

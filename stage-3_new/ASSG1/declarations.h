@@ -1,7 +1,7 @@
 #define int_type 0
 #define bool_type 1
-#include <stdio.h>
-FILE *yyin;
+
+FILE *outFile;
 
 typedef struct tnode{
 	int val; //  value for constants
