@@ -1800,8 +1800,8 @@ int yyerror(char const *s){
 	return 0;
 }
 
-int main(void){
-	FILE *inpFile=fopen("test.expl","r");
+int main(int argc,char **args){
+	FILE *inpFile=fopen(args[1],"r");
 	yyin=inpFile;
 	yyparse();
 	return 0;

@@ -14,3 +14,4 @@ else
 		write(c);
 	endif;
 endif;
+write(a);

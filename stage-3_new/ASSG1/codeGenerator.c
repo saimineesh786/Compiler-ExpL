@@ -39,10 +39,10 @@ int arithmeticOperatorHandler(tnode *root,int r1,int r2){
 	}
 	int nodeType=root->nodeType;
 	switch(nodeType){
-		case 2:	fprintf(outFile,"ADD R%d,%d\n",r1,r2);	break;	
-		case 3:	fprintf(outFile,"SUB R%d,%d\n",r1,r2);	break;	 
-		case 4:	fprintf(outFile,"MUL R%d,%d\n",r1,r2);	break;	
-		case 5:	fprintf(outFile,"DIV R%d,%d\n",r1,r2);	break;	
+		case 2:	fprintf(outFile,"ADD R%d,R%d\n",r1,r2);	break;	
+		case 3:	fprintf(outFile,"SUB R%d,R%d\n",r1,r2);	break;	 
+		case 4:	fprintf(outFile,"MUL R%d,R%d\n",r1,r2);	break;	
+		case 5:	fprintf(outFile,"DIV R%d,R%d\n",r1,r2);	break;	
 	}
 	freeReg();
 	return r1;
@@ -54,19 +54,19 @@ int logicalOperatorHandler(tnode *root,int r1,int r2){
 	}
 	int nodeType=root->nodeType;
 	switch(nodeType){
-		case 6:	fprintf(outFile,"LT R%d,%d\n",r1,r2);		break;	
-		case 7:	fprintf(outFile,"GT R%d,%d\n",r1,r2);		break;	 
-		case 8:	fprintf(outFile,"LE R%d,%d\n",r1,r2);		break;	
-		case 9:	fprintf(outFile,"GE R%d,%d\n",r1,r2);		break;	
-		case 10:	fprintf(outFile,"EQ R%d,%d\n",r1,r2);		break;	
-		case 11:	fprintf(outFile,"NE R%d,%d\n",r1,r2);		break;	
+		case 6:	fprintf(outFile,"LT R%d,R%d\n",r1,r2);		break;	
+		case 7:	fprintf(outFile,"GT R%d,R%d\n",r1,r2);		break;	 
+		case 8:	fprintf(outFile,"LE R%d,R%d\n",r1,r2);		break;	
+		case 9:	fprintf(outFile,"GE R%d,R%d\n",r1,r2);		break;	
+		case 10:	fprintf(outFile,"EQ R%d,R%d\n",r1,r2);		break;	
+		case 11:	fprintf(outFile,"NE R%d,R%d\n",r1,r2);		break;	
 	}
 	freeReg();
 	return r1;
 }
 
 void assignHandler(tnode *root,int r1){
-	fprintf(outFile,"MOV [%d],R%d\n",4096+*(root->varName)-'a',r1);
+	fprintf(outFile,"MOV [%d],R%d\n",4096+*(root->left->varName)-'a',r1);
 	freeReg();
 }
 
@@ -120,18 +120,19 @@ void ifHandler(tnode *root,int r1){
 void ifElseHandler(tnode *root,int r1){
 	int l1=getLabel(),l2=getLabel();
 	fprintf(outFile,"JZ R%d,L%d\n",r1,l1);
-	codeGeneration(root->left->left);
+	codeGeneration(root->right->left);
 	fprintf(outFile,"JMP L%d\n",l2);
 	fprintf(outFile,"L%d:\n",l1);
-	codeGeneration(root->left->right);
+	codeGeneration(root->right->right);
 	fprintf(outFile,"L%d:\n",l2);
 	freeReg();
 }
 
-void whileHandler(tnode *root,int r1){
+void whileHandler(tnode *root){
 	int l1=getLabel(),l2=getLabel();
 	fprintf(outFile,"L%d:\n",l1);
-	fprintf(outFile,"JZ R%d,L%d",r1,l2);
+	int r1=codeGeneration(root->left);
+	fprintf(outFile,"JZ R%d,L%d\n",r1,l2);
 	codeGeneration(root->right);
 	fprintf(outFile,"JMP L%d\n",l1);
 	fprintf(outFile,"L%d:\n",l2);
@@ -139,7 +140,6 @@ void whileHandler(tnode *root,int r1){
 }
 
 int codeGeneration(tnode *root){
-	
 	if(root->nodeType==0){
 		return constantHandler(root);
 	}
@@ -176,20 +176,18 @@ int codeGeneration(tnode *root){
 		ifElseHandler(root,r1);
 	}	
 	else if(root->nodeType==17){	
-		int r1=codeGeneration(root->left);
-		whileHandler(root,r1);
+		whileHandler(root);
 	}
 	else if(root->nodeType==18){
 		codeGeneration(root->left);
 		codeGeneration(root->right);
 	}
-	
 }
 
 void codeGen(tnode *root){
 	outFile=fopen("tmp.xsm","w");
 	fprintf(outFile,"%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",0,2056,0,0,0,0,0,0);
-	fprintf(outFile,"MOV SP,%d\n",4095);
+	fprintf(outFile,"MOV SP,%d\n",4095+26);
 	codeGeneration(root);
 	fprintf(outFile,"INT 10\n");
 }
