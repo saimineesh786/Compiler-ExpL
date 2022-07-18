@@ -2,6 +2,10 @@ read(n);
 i=1;
 s=0;
 while(i<=n)	do
+	if(i==4)	then
+		i=i+1;
+		continue;
+	endif;
 	s=s+i;
 	i=i+1;
 endwhile;

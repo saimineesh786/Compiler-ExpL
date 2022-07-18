@@ -1,5 +1,5 @@
 int reg=-1;
-int label=-1;
+int label=-1,whileLabel1,whileLabel2;
 
 int getLabel(){
 	return ++label;
@@ -130,6 +130,7 @@ void ifElseHandler(tnode *root,int r1){
 
 void whileHandler(tnode *root){
 	int l1=getLabel(),l2=getLabel();
+	whileLabel1=l1,whileLabel2=l2;
 	fprintf(outFile,"L%d:\n",l1);
 	int r1=codeGeneration(root->left);
 	fprintf(outFile,"JZ R%d,L%d\n",r1,l2);
@@ -137,6 +138,14 @@ void whileHandler(tnode *root){
 	fprintf(outFile,"JMP L%d\n",l1);
 	fprintf(outFile,"L%d:\n",l2);
 	freeReg();
+}
+
+void breakHandler(){
+	fprintf(outFile,"JMP L%d\n",whileLabel2);
+}
+
+void continueHandler(){
+	fprintf(outFile,"JMP L%d\n",whileLabel1);
 }
 
 int codeGeneration(tnode *root){
@@ -181,6 +190,16 @@ int codeGeneration(tnode *root){
 	else if(root->nodeType==18){
 		codeGeneration(root->left);
 		codeGeneration(root->right);
+	}
+	else if(root->nodeType==19){
+		codeGeneration(root->left);
+		codeGeneration(root->right);
+	}
+	else if(root->nodeType==20){
+		breakHandler();
+	}
+	else if(root->nodeType==21){
+		continueHandler();
 	}
 }
 

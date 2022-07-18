@@ -12,8 +12,8 @@
 %union{
 	struct tnode *no;
 }
-%type <no> Program expr Stmts Stmt ReadStmt WriteStmt AssgStmt IfStmt WhileStmt
-%token NUM PLUS MINUS MUL DIV LT GT LTE GTE NTEQ EQ READ WRITE ASSIGN ID IF WHILE DO ELSE ENDIF ENDWHILE THEN
+%type <no> Program expr Stmts Stmt ReadStmt WriteStmt AssgStmt IfStmt WhileStmt whileStmt whileStmts whileIfStmt
+%token NUM PLUS MINUS MUL DIV LT GT LTE GTE NTEQ EQ READ WRITE ASSIGN ID IF WHILE DO ELSE ENDIF ENDWHILE THEN BREAK CONTINUE
 %nonassoc LT GT LTE GTE NTEQ EQ
 %left PLUS MINUS
 %left MUL DIV
@@ -37,8 +37,22 @@ AssgStmt	: ID ASSIGN expr ';' {$$ = createAssignmentNode(12,$<no>1,$3);}
 		;		 
 IfStmt		: IF '(' expr ')' THEN Stmts ELSE Stmts ENDIF ';' {$$ = createIfElseNode(16,$3,$6,$8);}
 		| IF '(' expr ')' THEN Stmts ENDIF ';' {$$ = createIfNode(15,$3,$6);}
+		;
+whileIfStmt	: IF '(' expr ')' THEN whileStmts ELSE Stmts ENDIF ';' {$$ = createIfElseNode(16,$3,$6,$8);}
+		| IF '(' expr ')' THEN whileStmts ENDIF ';' {$$ = createIfNode(15,$3,$6);}
 		;	
-WhileStmt	: WHILE '(' expr ')' DO Stmts	ENDWHILE ';' {$$ = createWhileNode(17,$3,$6);}
+whileStmt	: AssgStmt {$$=$1;}
+		| whileIfStmt {$$=$1;}
+		| WhileStmt {$$=$1;}
+		| ReadStmt {$$=$1;}
+		| WriteStmt {$$=$1;}
+		| BREAK ';' {$$ = createBreakNode(20,NULL,NULL);}
+		| CONTINUE ';' {$$ = createContinueNode(21,NULL,NULL);}
+		;
+whileStmts	: whileStmts whileStmt {$$ = createWhileStmtsNode(19,$1,$2);}
+		| whileStmt {$$=$1;}
+		;
+WhileStmt	: WHILE '(' expr ')' DO whileStmts ENDWHILE ';' {$$ = createWhileNode(17,$3,$6);}
 		;
 expr		: expr PLUS expr {$$ = createArithmeticNode(2,$1,$3);}
 		| expr MINUS expr {$$ = createArithmeticNode(3,$1,$3);}

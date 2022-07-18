@@ -84,6 +84,27 @@ tnode * createLogicalNode(int nodeType,tnode *expr1,tnode *expr2){
 	return tn;
 }
 
+tnode * createWhileStmtsNode(int nodeType,tnode *stmts,tnode *stmt){
+	tnode *tn=(tnode *)malloc(sizeof(tnode));
+	tn->nodeType=nodeType;
+	tn->left=stmts,tn->right=stmt;
+	return tn;
+}
+
+tnode * createBreakNode(int nodeType,tnode *l,tnode *r){
+	tnode *tn=(tnode *)malloc(sizeof(tnode));
+	tn->nodeType=nodeType;
+	tn->left=l,tn->right=r;
+	return tn;
+}
+
+tnode * createContinueNode(int nodeType,tnode *l,tnode *r){
+	tnode *tn=(tnode *)malloc(sizeof(tnode));
+	tn->nodeType=nodeType;
+	tn->left=l,tn->right=r;
+	return tn;
+}
+
 tnode * createLeafNode(int val,int type,char *varName,int nodeType){
 	tnode *tn=(tnode *)malloc(sizeof(tnode));
 	tn->val=val,tn->type=type,tn->varName=varName,tn->nodeType=nodeType,tn->left=tn->right=NULL;

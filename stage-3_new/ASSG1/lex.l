@@ -26,6 +26,8 @@
 "!="	{return NTEQ;}
 "=="	{return EQ;}
 "read"  {return READ;}
+"break" {return BREAK;}
+"continue" {return CONTINUE;}
 "write" {return WRITE;}
 "if"	{return IF;}
 "then"	{return THEN;}
